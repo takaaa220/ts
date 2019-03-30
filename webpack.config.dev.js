@@ -1,9 +1,13 @@
 const path = require('path');                             // 絶対パスに変換するために
 const htmlWebpackPlugin = require('html-webpack-plugin'); // index.htmlをビルドチェインの中で作っちゃう
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   mode: 'development',
-  entry: './src/App.tsx',  // エントリポイントの指定、src下に書いていくので　src/index.tsxにしとく
+  entry: [
+    './src/App.tsx',  // エントリポイントの指定、src下に書いていくので　src/index.tsxにしとく
+    './src/stylesheets/application.scss',
+  ],
   devtool: 'inline-source-map',
   module: {
     rules: [
@@ -27,6 +31,12 @@ module.exports = {
         options: {
           configFile: 'tsconfig.dev.json' // TypeScriptのコンパイル設定ファイル
         }
+      },
+      {
+        test: /\.scss$/,
+        use: [
+          MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'
+        ]
       }
     ]
   },
@@ -40,6 +50,9 @@ module.exports = {
   plugins: [
     new htmlWebpackPlugin({
       template: "index.html"    // 同じ階層にあるindex.htmlを元に、デプロイ用のindex.htmlを作って出力ディレクトリに配置してくれる
+    }),
+    new MiniCssExtractPlugin({
+      filename: 'css/style.css',
     })
   ],
   devServer: {
